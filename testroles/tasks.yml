@@ -1,0 +1,31 @@
+---
+# tasks file for finalrole
+- name: Install nginx
+  apt:
+    name: nginx
+    update_cache: yes
+    state: latest
+  become: yes
+
+- name: copy nginx.conf
+  template:
+    src: webserver.conf
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  become: yes
+
+- name: copy html pages
+  copy:
+    src: blackdog
+    dest: /var/www/
+    force: yes
+  become: yes
+
+- name: Enable new site
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  become: yes
+  notify: restart nginx
+
